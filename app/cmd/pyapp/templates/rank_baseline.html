@@ -1,0 +1,155 @@
+{% if mobile %}
+{% extends "layout_mobile.html" %}
+{% else %}
+{% extends "layout.html" %}
+{% endif %}
+
+{% block content %}
+
+<style>
+  a {
+    color: var(--bs-table-color);
+    text-decoration: none; /* no underline */
+  }
+  .ag-theme-quartz-auto-dark {
+    height: calc(100vh - 260px);
+    --ag-font-size: 16px;
+    --ag-font-family: var(--bs-body-font-family);
+    --ag-grid-size: 5px;
+    --ag-list-item-height: 20px;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
+<!-- <script src="./static/js/dialog_result.js"></script> -->
+
+<!-- <center><h4>Rank Baseline</h4></center> -->
+<div class="form-group row">
+  <div class="col-12">
+  <div class="form-outline">
+    <br style="line-height: 10px;">
+    <!-- <span id="method_text" style="font-size:15px;color:var(--bs-yellow);">Snapshot of rankings to generate a 'Win Value'</span>&nbsp;&nbsp;&nbsp; -->
+    <span id="update_date" style="float:right;font-size:15px;color:var(--bs-blue)"></span>
+    <br>
+    <br style="line-height: 10px;">
+  </div>
+</div>
+</div>
+
+<div class="form-group row">
+  <div class="col-12">
+    <div class="card {{ theme.CARD_CLASS }} mb-2" style="width:auto">
+      <!-- <div class="card-header">Completed</div> -->
+      <div class="card-body">
+        <div id="rank_baseline_table" class="ag-theme-quartz-auto-dark"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+var gridAPI = null;
+
+function render_grid() {
+  
+  if ( gridAPI ) {
+    gridAPI.destroy();
+    gridAPI = null;
+  }
+
+  $("#log_table_new").attr('visible','false');
+
+  const columnDefs = [
+    { field: "user_id", headerName: "user_id", width: 80 },
+    { field: "rank", headerName: "Rank", width: 80 },
+    { field: "name", headerName: "Name", width: 300 },
+    { field: "value", headerName: "Win Value", width: 120 },
+  ];
+
+
+  function dateFormatter(d) {
+    return formatDatePlusTimeFromUTC(d.value);
+  }
+
+  function jsonFormatter(d) {
+    return JSON.stringify(d.value);
+  }
+
+  // let the grid know which columns and what data to use
+  const gridOptions = {
+    defaultColDef: {
+      resizable: false,
+      sortable: false,
+    },
+    columnDefs: columnDefs,
+    rowData: null,//rowData,
+    onGridReady: (params) => {
+      params.api.setColumnsVisible(['user_id'], false);
+    },
+    onFirstDataRendered: onFirstDataRendered,
+  };
+
+  
+  function onFirstDataRendered(params) {
+    /*
+    const allRowNodes = params.api.getAllRowNodes();
+    const allRowData = allRowNodes.map(node => node.data);
+    console.log(allRowData);
+    */
+    
+    /*
+    .forEach( function(row) {
+      console.log(row);
+      const rowNode = gridOptions.api.getRowNode(row.id); // Get row node by ID
+      if (rowNode) {
+          rowNode.setData({ rank: 1 }); // Update the data
+      }
+      param.api.setData(row, 'value', 100);
+    });
+    */
+    //params.api.setColumnVisible('weighted_wins', false)
+    //params.api.sizeColumnsToFit();
+    /*window.setTimeout(() => {
+    const colIds = params.api.getColumns().map(c => c.colId)
+    params.columnApi.autoSizeColumns(colIds)
+  }, 50)
+  */
+  }
+
+
+  // setup the grid after the page has finished loading
+  document.addEventListener('DOMContentLoaded', () => {
+
+      const gridDiv = document.querySelector('#rank_baseline_table');
+      gridAPI = agGrid.createGrid(gridDiv, gridOptions);
+
+      d3.json("api/rank_baseline", {
+        method:"POST",
+        body: {},
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      }).then( function(data) {
+        gridAPI.setGridOption("rowData", data['results']);
+
+        $("#update_date").html("Last updated: " + formatDateFromUTC(data['update_date']));
+
+        $("#rank_baseline_table").css('visibility', 'visible');
+        $("#rank_baseline_table").show();
+      });
+      
+  });
+}
+
+render_grid();
+
+// global variable
+var page="rank_baseline";
+
+$('#rank_baseline').addClass('active');
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,65 @@
+---
+services:
+  postgres:
+    image: postgres:14.3
+    container_name: python_server_postgres
+    restart: always
+    ports: 
+      - 127.0.0.1:5532:5532
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - PGDATA=/var/lib/postgresql/data
+      - PGPORT=5532
+    volumes:
+      - ${SRC_PATH}/data/database:/var/lib/postgresql/data
+      - ${SRC_PATH}/app/cmd/db:/docker-entrypoint-initdb.d
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -p 5532"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - my_network
+  python-server:
+    container_name: ${SERVICE_NAME}_bff
+    image: ${IMAGE_NAME_FULL}
+    restart: always
+    volumes:
+      - ${SRC_PATH}/data:/cmd/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - my_network
+    env_file:
+      - .env
+    environment:
+      - PORT=9193
+      - TZ=Australia/Melbourne
+    # ports: 
+    #   - 127.0.0.1:8193:8193
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9193/healthz"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+  envoy:
+    image: envoyproxy/envoy:v1.25-latest
+    restart: always
+    container_name: ${SERVICE_NAME}_router
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      - my_network
+    ports:
+      - ${NETWORK_LISTEN}:9192:9192
+
+networks:
+  my_network:
+    driver: bridge

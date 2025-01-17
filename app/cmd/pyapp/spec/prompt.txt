@@ -1,0 +1,16 @@
+write a python function to return a weekly plan based on:
+
+- Rest / Endurance / Intensity Days
+- 1 Rest Day a Week
+- 2 Intensity Days a Week
+
+write a python function to return a weekly plan
+based on Rest / Endurance / Intensity Days
+
+input is elapsed week days: 
+example = [Endurance, Intensity]
+
+Return a week with these constaints:
+- 1 Rest Day a Week
+- 2 Intensity Days a Week
+- Intensity Days at least 1 Day apart

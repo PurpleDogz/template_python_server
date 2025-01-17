@@ -1,0 +1,47 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python Server
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    #runs-on: ubuntu-latest
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.12"
+    - name: Setup venv and unit test
+      run: |
+        cd app;make build
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-reports
+        path: |
+          app/cmd/reports/*.xml
+          app/cmd/reports/*.html
+        if-no-files-found: warn
+      if: always()
+    - name: Lint Code
+      run: |
+        cd app;make lint
+    - name: Docker Build
+      run: |
+        ./docker_build.sh
+    - name: Docker Publish
+      run: |
+        ./docker_publish.sh

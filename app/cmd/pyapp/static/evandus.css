@@ -1,0 +1,95 @@
+.evrowadjuster {
+  /*padding:22px !important;*/
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+}
+
+.noBorder {
+  border: 0px;
+  padding:0; 
+  margin:0;
+  border-collapse: collapse;
+}
+
+.card-body-nopadding{
+padding:0px !important;
+}
+
+table.no-spacing {
+  border-spacing:0; /* Removes the cell spacing via CSS */
+  border-collapse: collapse;  /* Optional - if you don't want to have double border where cells touch */
+  margin-bottom:0;
+}
+
+table.table-sm1 > :not(caption) > * > * {
+  padding: 0.20rem 0.20rem;
+}
+
+
+table.table-sm2 > :not(caption) > * > * {
+  padding: 0.08rem 0.08rem;
+}
+
+div.card-body-wide{
+  padding:1px !important;
+}
+
+.border-success-ex {
+  --bs-border-opacity: 0.6;
+  border-color: rgba(var(--bs-success-rgb), var(--bs-border-opacity)) !important;
+}
+
+.border-warning-ex {
+  --bs-border-opacity: 0.6;
+  border-color: rgba(var(--bs-warning-rgb), var(--bs-border-opacity)) !important;
+}
+
+.border-danger-ex {
+  --bs-border-opacity: 0.6;
+  border-color: rgba(var(--bs-danger-rgb), var(--bs-border-opacity)) !important;
+}
+
+.bg-primary-ex {
+  --bs-bg-opacity: 0.2;
+  background-color: rgba(var(--bs-primary-rgb), var(--bs-bg-opacity)) !important;
+}
+
+.image_sizer
+{
+  max-width: 100%;
+  min-width: 300px;
+  height: auto;
+}
+
+.image_sizer_sm
+{
+  max-width: 50%;
+  min-width: 300px;
+  max-height: 50%;
+}
+
+.axisWhite line{
+  stroke: white;
+}
+
+.axisWhite path{
+  stroke: white;
+}
+
+.axisWhite text{
+  fill: white;
+}  
+
+.modal-open[style] {
+  padding-right: 0px !important;
+}
+
+.ag-theme-alpine-dark {
+  width: 100%;
+  height: calc(100vh - 205px);
+  box-sizing: border-box;
+  --ag-font-size: 11px;
+  --ag-font-family: var(--bs-body-font-family);
+  --ag-grid-size: 5px;
+  --ag-list-item-height: 20px;
+}

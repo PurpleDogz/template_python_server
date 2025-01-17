@@ -1,0 +1,163 @@
+<html lang="en" xml:lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google" content="notranslate"> 
+    <title>Olympia</title>
+      
+    <link rel="stylesheet" href="{{ app_url }}/static/bootstrap.{{ theme.BOOTSWATCH }}.css">
+    <link rel="stylesheet" href="{{ app_url }}/static/evandus.css?ts={{ now }}">
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://d3js.org/d3.v6.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.1/d3-annotation.min.js"></script>
+
+    <script src="{{ app_url }}/js/moment.min.js?ts={{ now }}"></script>
+    <script src="{{ app_url }}/js/utils.js?ts={{ now }}"></script>
+    
+    <style>
+      /*
+      .navbar-default {
+        background-color: #2c3e50;
+        border-color: transparent;
+      }
+      */
+      html, body {
+          overflow-x: hidden;
+      }
+      div.myscroller {
+          width: 100%;
+          height: calc(100% - 85px);
+          overflow-x: hidden;
+          overflow-y: auto;
+      }
+      a:hover {
+          color: #fff;
+          /* background-color: yellow; */
+      }
+    </style>
+  </head>
+
+  <body> 
+    <div id="top_container" class="ui container">
+      <nav class="navbar {{ theme.NAVBAR_CLASS }} {{ theme.NAVBAR_TEXT_CLASS }}" style="justify-content:center;padding-bottom:0px;">
+        <center>
+          <a class="navbar-brand" href="{{ app_url }}"><img title="" src="{{ app_url }}/static/icons/{{ icon_name }}" style="width:35px;height:35px;"></a>
+          <h1 class="navbar-brand">{{ title }}</h1>
+        </center>
+      </nav>
+      <nav class="navbar navbar-expand-lg {{ theme.NAVBAR_CLASS }} {{ theme.NAVBAR_TEXT_CLASS }}" id="top_menu" style="padding-top:0px;">
+          <div class="container-fluid">
+      
+            <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button> -->
+
+            <div class="collapse navbar-collapse" id="navbarColor01">
+              <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                  <a id="leaderboard" class="nav-link" href="{{ app_url }}/{{ slug }}/leaderboard">
+                    <img class="grey-image" id="leaderboard" src="{{ app_url }}/static/icons/Leaderboard-T.png" style="width:22px;height:22px;padding-right:5px">Leaderboard
+                    <span class="visually-hidden">(current)</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  &nbsp;&nbsp;&nbsp;
+                </li>
+                <li class="nav-item">
+                  <a id="results" class="nav-link" href="{{ app_url }}/{{ slug }}/results">
+                    <img class="grey-image" id="leaderboard" src="{{ app_url }}/static/icons/Results-T.png" style="width:22px;height:22px;padding-right:5px">Results</a>
+                </li>
+                <li class="nav-item">
+                  &nbsp;&nbsp;&nbsp;
+                </li>
+                <li class="nav-item">
+                  <a id="head_to_head" class="nav-link" href="{{ app_url }}/{{ slug }}/head_to_head">
+                    <img class="grey-image" id="leaderboard" src="{{ app_url }}/static/icons/Head-To-Head-T.png" style="width:22px;height:22px;padding-right:5px">Head to Head</a>
+                </li>
+                <li class="nav-item">
+                  &nbsp;&nbsp;&nbsp;
+                </li>
+                <li class="nav-item">
+                  <a id="rank_baseline" class="nav-link" href="{{ app_url }}/{{ slug }}/rank_baseline">
+                    <img class="grey-image" id="leaderboard" src="{{ app_url }}/static/icons/Rank-Baseline-T.png" style="width:22px;height:22px;padding-right:5px">Rank Baseline</a>
+                </li>
+<!-- 
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Other</a>
+                  <div class="dropdown-menu">->
+                    <a class="dropdown-item" href="./activity_search">Activity Search</a>
+                    <a class="dropdown-item" href="./activity_history_compare">History Compare</a>
+                  </div>
+                </li> -->
+              </ul>
+
+              <a class="navbar-brand" href="{{ app_url }}/logout"><img title="Exit" src="{{ app_url }}/static/icons/Logout-T.png" style="width:25px;height:25px;"></a>
+
+            </div>
+          </div>
+        </nav>
+        <div class="myscroller myscroller_override" id="myscroller">
+          <BR style="line-height:5px;">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <script>
+
+    //$(document).ready( function () {
+      //console.log("Start: " + readCookie("window_pending_state"))
+      //$('#image_expand').hide();
+      $('#image_collapse').hide();
+
+      if ( readCookie("window_pending_state") == "expand" ) {
+        do_expand();
+      } else if ( readCookie("window_pending_state") == "collapse" ) {
+        $('#image_expand').show();
+      } else {
+        //console.log("Start Stable: " + readCookie("window_state"));
+        if ( readCookie("window_state") == "collapse" )
+        {
+          $('#image_expand').show();
+        } else if ( readCookie("window_state") == "expand" ) {
+          do_expand(true);
+        }
+      }
+    //});
+
+      function on_collapse() {
+        createCookie("window_state", "collapse");
+        createCookie("window_pending_state", "");
+        window.location.reload();
+      }
+
+      function do_collapse() {
+        if ( readCookie("window_pending_state") == "collapse" ) {
+          $('#top_container').toggleClass('container_off container');
+          $('#image_expand').show();
+          $('#image_collapse').hide();
+          createCookie("window_state", "collapse");
+          createCookie("window_pending_state", "");
+        }
+      }
+
+      function on_expand() {
+        createCookie("window_pending_state", "expand");
+        window.location.reload();
+      }
+
+      function do_expand(nocheck) {
+        if ( nocheck || readCookie("window_pending_state") == "expand" ) {
+          $('#top_container').toggleClass('container container_off');
+          $('#image_expand').hide();
+          $('#image_collapse').show();
+          createCookie("window_state", "expand");
+          createCookie("window_pending_state", "");
+        }
+      }
+    </script>
+  </body>
+</html>

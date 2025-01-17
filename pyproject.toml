@@ -1,0 +1,14 @@
+[tool.ruff]
+# Enable flake8-bugbear (`B`) rules.
+lint.select = ["E", "F", "B"]
+
+# Never enforce `E501` (line length violations).
+lint.ignore = ["E501", "B008"]
+
+# Avoid trying to fix flake8-bugbear (`B`) violations.
+lint.unfixable = ["B"]
+
+# Ignore `E402` (import violations) in all `__init__.py` files, and in `path/to/file.py`.
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"path/to/file.py" = ["E402"]

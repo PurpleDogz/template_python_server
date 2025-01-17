@@ -1,0 +1,103 @@
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name=viewport content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name=apple-mobile-web-app-title content="{{ app_name }}">
+    <meta name=apple-mobile-web-app-capable content="yes">
+    <meta name=apple-mobile-web-app-status-bar-style content="black-translucent">
+
+    <link rel="manifest" href="./static/manifest.json">
+    <link rel=icon type=image/png sizes=32x32 href="./static/icons/favicon-P-32x32.png">
+    <link rel=icon type=image/png sizes=16x16 href="./static/icons/favicon-P-16x16.png">
+    <link rel=apple-touch-icon sizes="180x180" href="./static/icons/favicon-P-180x180.png">
+    <link rel="shortcut icon" type="image/png" href="./static/icons/favicon-P-180x180.png"/>
+    <meta name=description content="Sports Stats">
+    
+    <title>{{ app_name }}</title>
+    
+    <link rel="stylesheet" href="{{ app_url }}/static/bootstrap.{{ theme.BOOTSWATCH }}.css"/>
+    <link rel="stylesheet" href="{{ app_url }}/static/evandus.css?ts={{ now }}">
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://d3js.org/d3.v6.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.1/d3-annotation.min.js"></script>
+
+    <script src="{{ app_url }}/js/moment.min.js?ts={{ now }}"></script>
+    <script src="{{ app_url }}/js/utils.js?ts={{ now }}"></script>
+
+    <style>
+    html, body {
+        overflow-x: hidden;
+    }
+    body {
+        width: 100%;
+    }
+    .mydiv_off {
+        width: 100%;
+        height: 710px;
+        /*overflow-x: hidden;*/
+      } 
+    .navbar_off {
+        height: 95px;
+    } 
+    div.myscroller {
+        width: 100%;
+        height: calc(100% - 85px);
+        {% if enableXscroll == 'true' %}
+        overflow-x: auto;
+        {% else %}
+        overflow-x: hidden;
+        {% endif %}
+        overflow-y: auto;
+    }
+    .navbar {
+        height: 72px;
+    }
+    .navbar-brand {
+        color: #fff;
+        font-size:10;
+    }
+    .grey-image {
+        filter:contrast(5%);
+    }
+    a:hover {
+        color: #fff;
+        /* background-color: yellow; */
+    }
+    </style>
+    </head>
+
+    <body>
+        <div class="myscroller myscroller_override" id="myscroller">
+            {% block content %}
+            {% endblock %}
+        </div>
+        <div class="container-fluid">
+            <nav class="navbar" id="top_menu">          
+              <div class="container-fluid">
+                <a class="navbar-brand" href="{{ app_url }}/{{ slug }}/leaderboard"><img class="grey-image" id="leaderboard" src="{{ app_url }}/static/icons/Leaderboard-T.png" style="width:42px;height:42px;"><center><p class="grey-image" id="admin-server-stats_txt">Leaders</p></center></a>
+                <a class="navbar-brand" href="{{ app_url }}/{{ slug }}/results"><img class="grey-image" id="results" src="{{ app_url }}/static/icons/Results-T.png" style="width:42px;height:42px;"><center><p class="grey-image" id="admin-user-list_txt">Results</p></center></a>
+                <a class="navbar-brand" href="{{ app_url }}/{{ slug }}/head_to_head"><img class="grey-image" id="head_to_head" src="{{ app_url }}/static/icons/Head-To-Head-T.png" style="width:42px;height:42px;"><center><p class="grey-image" id="admin-user-list_txt">Head</p></center></a>
+                <a class="navbar-brand" href="{{ app_url }}/{{ slug }}/rank_baseline"><img class="grey-image" id="rank_baseline" src="{{ app_url }}/static/icons/Rank-Baseline-T.png" style="width:42px;height:42px;"><center><p class="grey-image" id="admin-job-list_txt">Rank</p></center></a>
+                <!-- <a class="navbar-brand" href="{{ app_url }}/more"><img class="grey-image" id="more" src="{{ app_url }}/static/icons/More-4.png" style="width:42px;height:42px;"><center><p class="grey-image" id="more_txt">More..</p></center></a> -->
+              </div>
+            </nav>
+        </div>
+
+    <script>
+       // $("p").addClass('grey-image');
+       // $("img").addClass('grey-image');
+        //$("p").addClass('grey-image');
+        if ( typeof page != 'undefined' )
+        {
+            $("#" + page).removeClass('grey-image');
+            $("#" + page + "_txt").removeClass('grey-image');
+        }
+    </script>
+
+    </body>
+</html>

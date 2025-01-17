@@ -1,0 +1,98 @@
+<html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="google" content="notranslate"> 
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name=apple-mobile-web-app-title content="{{ app_name }}">
+      <meta name=apple-mobile-web-app-capable content="yes">
+      <meta name=apple-mobile-web-app-status-bar-style content="default">
+      <meta name=theme-color content="#1a0933">
+        <title>{{ app_name }}</title>
+        <link rel="stylesheet" href="./static/bootstrap.{{ theme.BOOTSWATCH }}.css">
+    </head>
+
+{% if production %}
+    <!-- Google tag (gtag.js) -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-HVNESXEMYP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  </script> -->
+{% endif %}
+
+<body>
+
+<style>
+  .card {
+    max-width: 500px;
+    margin: 0 auto;
+    margin-top: 50px;
+  }
+</style>
+        
+<div class="ui container">
+
+<center><h1>Olympia</h1></center>
+<center><i style="color:var(--bs-info)">Sporting Competition Ranking Site</i><br><i style="color:var(--bs-info)">Collect your results and rank against competitors</i></center>
+<div class="form-group row">
+  <div class="col-12">
+    <div class="card {{ theme.CARD_CLASS }} mb-3">
+        <div class="card-header" style="text-align:center">Select Sporting Group</div>
+      <div class="card-body">
+      <form method="post" _lpchecked="1" id="myform" action="{{ app_url }}/group_select" >
+        <fieldset>
+        <div class="form-group row">
+          <center>
+          <div class="col-8">
+            <select class="form-control" name="group">
+              {% for group in groups %}
+              <option value="{{ group.slug }}">{{ group.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </center>
+        </div>
+        <BR>
+          <div class="form-group row">
+            <div class="col-12">
+            <center>
+            <button type="submit" class="btn {{ theme.BUTTON_CLASS }}" name="action" value="refresh">Connect</button>
+          </center>
+          </div>
+          </div>
+      </fieldset>
+      </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<center>
+<div class="footer__content">
+      <a href="./terms" class="footer__link small">Terms of Service</a>
+      &nbsp;&nbsp;
+      <a href="./privacy" class="footer__link small">Privacy Policy</a>
+</div>
+</center>
+
+<script>
+
+function checkEmbedded() {
+  if ( window.ReactNativeWebView ) {
+    const messageData = {
+      methodName: 'loginRoute',
+      params: {},
+    };
+    window.ReactNativeWebView.postMessage(JSON.stringify(messageData));
+  }
+}
+
+checkEmbedded();
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,13 @@
+{ 
+  "name": "Olympia", 
+  "short_name": "Olympia", 
+  "start_url": "/", 
+  "display": "standalone", 
+  "icons": [{ 
+    "src": "icons/favicon-P-180x180.png", 
+    "sizes": "180x180", 
+    "type": "image/png" 
+  }],
+  "background_color": "#0f2537",
+  "theme_color": "#0f2537"
+}

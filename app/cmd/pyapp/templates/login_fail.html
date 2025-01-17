@@ -1,0 +1,37 @@
+<html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{ app_name }}</title>
+        <link rel="stylesheet" href="./static/bootstrap.{{ theme.BOOTSWATCH }}.css">
+    </head>
+<body>
+    
+<style> 
+  .card {
+    max-width: 500px;
+    margin: 0 auto;
+    margin-top: 50px;
+  }
+</style>
+
+<div class="ui container">
+
+<center><h1>{{ app_name }}</h1></center>
+
+<div class="form-group row">
+
+  <div class="col-12">
+    <div class="card {{ theme.CARD_CLASS }} mb-3">
+      <div class="card-body">
+        <center><h2>Login Failed</h2></center>
+        <center>{{ reason }}</center>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+
+</html>

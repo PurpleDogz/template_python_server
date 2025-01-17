@@ -1,0 +1,235 @@
+{% if mobile %}
+{% extends "layout_mobile.html" %}
+{% else %}
+{% extends "layout.html" %}
+{% endif %}
+
+{% block content %}
+
+<style>
+  a {
+    color: var(--bs-table-color);
+    text-decoration: none; /* no underline */
+  }
+  .ag-theme-quartz-auto-dark {
+    height: calc(100vh - 260px);
+    --ag-font-size: 16px;
+    --ag-font-family: var(--bs-body-font-family);
+    --ag-grid-size: 5px;
+    --ag-list-item-height: 20px;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
+<script src="{{ app_url }}/js/dialog_result.js?ts={{ now }}"></script>
+<script src="{{ app_url }}/js/bootstrap-datepicker.min.js?ts={{ now }}"></script>
+<link rel="stylesheet" href="{{ app_url }}/static/bootstrap-datepicker.standalone.css"/>
+
+{% include 'dialogs_general.html' %}
+
+<!-- <center><h4>Results</h4></center> -->
+
+<form method="get" _lpchecked="1" id="myform">
+  <fieldset>
+
+<div class="form-group row">
+
+  <!-- <div class="col-3" style="width:150px">
+    <div class="form-outline">
+      Period: 
+      <select class="form-control" name="period" onchange="this.form.submit()">
+        <option selected="selected">This Week</option>
+        <option>All</option>
+      </select>
+    </div>
+  </div> -->
+  <div class="col-3" style="width:130px">
+    <br>
+    <button type="button" class="btn btn-outline-info" onclick="show_add_result_dialog()">Add Result</button>
+  </div>
+  <div class="col-3" style="width:150px">
+    <br>
+    <button id="delete_button" type="button" disabled="disabled" class="btn btn-outline-info" onclick="delete_result()">Delete Result</button>
+  </div>
+
+  <div class="col-3" style="width:140px">
+    <br>
+    <div class="ui input" style="margin-top:5px">
+      <input name="search_comment" type="text" placeholder="Search Comments" value="{{ search_comment or '' }}" style="width:220px">
+    </div>
+  </div>
+  <!-- <div class="col-3" style="width:150px">
+    <div class="form-outline">
+      Level: 
+      <select class="form-control" name="level" onchange="this.form.submit()">
+        <option selected="selected">ERROR</option>
+        <option>WARNING</option>
+        <option>INFO</option>
+        <option>ALL</option>
+      </select>
+    </div>
+  </div> -->
+
+  <div class="col-3">
+     <button type="submit" class="btn {{ theme.BUTTON_CLASS }}" name="action" value="refresh" style="visibility:hidden;">Refresh</button>
+  </div>
+</div>
+</fieldset>
+</form>
+
+<div class="form-group row">
+  <div class="col-12">
+    <div class="card {{ theme.CARD_CLASS }} mb-2" style="width:auto">
+      <!-- <div class="card-header">Completed</div> -->
+      <div class="card-body">
+        <div id="result_table" class="ag-theme-quartz-auto-dark"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+var gridAPI = null;
+
+function init_controls() {
+    objSelect = document.getElementById("myform").period;
+    select = "{{ period or 'This Week' }}";
+    setSelectedValue(objSelect, select);
+}
+function delete_result() {
+  var selectedRows = gridAPI.getSelectedRows();
+  if (selectedRows.length == 0) {
+    alert("Please select a row to delete.");
+    return;
+  }
+  var result_id = selectedRows[0].id;
+  var result_time = selectedRows[0].time;
+  var result_winner = selectedRows[0].win_user;
+  var result_loser = selectedRows[0].loss_user;
+  var result_comment = selectedRows[0].comments;
+  var result = {
+    id: result_id,
+    time: result_time,
+    win_user: result_winner,
+    loss_user: result_loser,
+    comments: result_comment,
+  };
+  show_delete_result_dialog(result, reload);
+}
+
+function reload() {
+  window.location.reload();
+}
+
+function render_grid() {
+
+    if ( gridAPI ) {
+      gridAPI.destroy();
+      gridAPI = null;
+    }
+  
+    $("#result_table").attr('visible','false');
+
+    name_length = 250
+
+    const columnDefs = [
+      { field: "id", hide: true },
+      { field: "time", headerName: "Time", width: 170, valueFormatter: dateFormatter },
+      { field: "win_user", headerName: "Winner", width: name_length },
+      { field: "loss_user", headerName: "Loser", width: name_length },
+      { field: "comments", headerName: "Comments", width: 300 },
+      { field: "owner", headerName: "Creator", width: name_length },
+      { field: "owner_id", hide: true },
+    ];
+
+    function dateFormatter(d) {
+     return formatDateFromUTC(d.value);
+    }
+
+    function jsonFormatter(d) {
+     return JSON.stringify(d.value);
+    }
+
+    function onSelectionChanged(event) {
+      var selectedRows = gridAPI.getSelectedRows();
+      if (selectedRows.length == 0) {
+        $("#delete_button").attr('disabled', 'disabled');
+      } else if ( "{{ user_id }}" == selectedRows[0].owner_id ) {
+          $("#delete_button").removeAttr('disabled');
+      }
+    }
+
+    // let the grid know which columns and what data to use
+    const gridOptions = {
+      defaultColDef: {
+        resizable: false,
+        sortable: false,
+      },
+      rowSelection:'single',
+      columnDefs: columnDefs,
+      rowData: null,//rowData,
+      //onFirstDataRendered: onFirstDataRendered,
+    };
+
+    
+
+    
+    /*
+  function onFirstDataRendered(params) {
+    //params.api.sizeColumnsToFit();
+    window.setTimeout(() => {
+    const colIds = params.api.getColumns().map(c => c.colId)
+    params.columnApi.autoSizeColumns(colIds)
+  }, 50)
+  }
+  */
+
+    // setup the grid after the page has finished loading
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const gridDiv = document.querySelector('#result_table');
+        gridAPI = agGrid.createGrid(gridDiv, gridOptions);
+
+        gridAPI.addEventListener('selectionChanged', onSelectionChanged);
+
+        const urlParams = new URLSearchParams(window.location.search);
+
+        p_period = urlParams.get('period');
+        p_search = urlParams.get('search_comment');
+        
+        if ( p_period == null ) {
+          p_period = "Week";
+        }
+
+        request = {}
+
+        if (p_search ) {
+          request['search_comment'] = p_search;
+        }
+
+        d3.json("api/results", {
+          method:"POST",
+          body: JSON.stringify(request),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8"
+          }
+        }).then( function(data) {
+          gridAPI.setGridOption("rowData", data);
+          $("#result_table").css('visibility', 'visible');
+          $("#result_table").show();
+        });
+    });
+}
+
+//init_controls();
+render_grid();
+  
+// global variable
+var page="results";
+
+$('#results').addClass('active');
+</script>
+
+
+{% endblock %}

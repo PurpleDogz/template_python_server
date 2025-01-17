@@ -1,0 +1,27 @@
+---
+services:
+  python-server:
+    container_name: ${SERVICE_NAME}
+    image: ${IMAGE_NAME_FULL}
+    restart: always
+    volumes:
+      - ${SRC_PATH}/data:/cmd/data
+    network_mode: host
+    # ports: 
+    #   - 127.0.0.1:8140:8140
+    # networks:
+    #   - net_admin
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8140/healthz"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+# networks:
+#   net_admin:
+#     driver: bridge
+    # ipam:
+    #   config:
+    #     - subnet: 10.11.0.0/16

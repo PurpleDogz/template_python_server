@@ -1,0 +1,96 @@
+<html lang="en" xml:lang="en" data-bs-theme="dark">
+    <head>
+      <meta charset="utf-8">
+      <meta name="google" content="notranslate"> 
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name=apple-mobile-web-app-title content="">
+      <meta name=apple-mobile-web-app-capable content="yes">
+      <meta name=apple-mobile-web-app-status-bar-style content="default">
+      <meta name=theme-color content="#1a0933">
+        <title>{{ app_name }}</title>
+        <link rel="stylesheet" href="../static/bootstrap.{{ theme.BOOTSWATCH }}.css">
+    </head>
+
+{% if production %}
+    <!-- Google tag (gtag.js) -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-HVNESXEMYP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  </script> -->
+{% endif %}
+
+<body>
+
+<style>
+  .card {
+    max-width: 500px;
+    margin: 0 auto;
+    margin-top: 50px;
+  }
+</style>
+
+<style>
+  img.border_me {
+    border: 2px solid var(--bs-yellow);
+  }
+  </style>
+        
+<div class="ui container">
+
+<center><h1>{{ app_name }}</h1></center>
+
+<div class="form-group row">
+
+  <div class="col-12">
+    <div class="card {{ theme.CARD_CLASS }} mb-3">
+        <div class="card-header" style="text-align:center">{{ group }}</div>
+      <div class="card-body">
+
+      {% if login_mode == 'oauth' or login_mode == 'any' %}
+      <br style="line-height: 1.5;">
+      <center>
+      <a href="{{ app_url }}/{{ slug }}/login_google"><img src="{{ app_url }}/static/icons/GoogleLogin-1.png" class="border_me" style="width:240px;height:55px;"></a>
+      </center>
+      <br style="line-height: 1.5;">
+      {% elif login_mode == 'basic_auth' or login_mode == 'any' %}
+      <form method="post" _lpchecked="1" id="myform" action="{{ app_url }}/{{ slug }}/auth/token" >
+        <fieldset>
+        <div class="form-group row">
+          <div class="col-12">
+            <center>
+            <label for="level" class="form-label">Username</label>
+            <input type="text" placeholder="username" class="input-control" name="username" autocomplete="username">
+          </center>
+          </div>
+        </div>
+        <BR>
+        <div class="form-group row">
+          <div class="col-12">
+            <center>
+              <label for="level" class="form-label">Password</label>
+              <input type="password" placeholder="password" class="input-control" name="password" autocomplete="current-password">
+            </center>
+          </div>
+        </div>
+        <BR>
+          <div class="form-group row">
+            <div class="col-12">
+            <center>
+            <button type="submit" class="btn {{ theme.BUTTON_CLASS }}" name="action" value="refresh">Login</button>
+          </center>
+          </div>
+          </div>
+      </fieldset>
+      </form>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+
+</html>

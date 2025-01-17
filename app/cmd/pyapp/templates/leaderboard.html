@@ -1,0 +1,239 @@
+{% if mobile %}
+{% extends "layout_mobile.html" %}
+{% else %}
+{% extends "layout.html" %}
+{% endif %}
+
+{% block content %}
+
+<style>
+  a {
+    color: var(--bs-table-color);
+    text-decoration: none; /* no underline */
+  }
+  .ag-theme-quartz-auto-dark {
+    height: calc(100vh - 260px);
+    --ag-font-size: 16px;
+    --ag-font-family: var(--bs-body-font-family);
+    --ag-grid-size: 5px;
+    --ag-list-item-height: 20px;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
+<!-- <script src="./static/js/dialog_result.js"></script> -->
+
+<!-- <center><h4>Leaderboard</h4></center> -->
+
+<form method="get" _lpchecked="1" id="myform">
+  <fieldset>
+
+<div class="form-group row">
+
+    <!--<div class="col-3" style="width:140px">
+      <label class="form-label">Search:</label>
+      <div class="ui input">
+        <input name="search" type="text" placeholder="Search" value="{{ search or '' }}" style="width:120px">
+      </div>
+    </div> -->
+
+  <div class="col-3" style="width:150px">
+    <div class="form-outline">
+      Period:
+      <select class="form-control" name="period" onchange="this.form.submit()">
+        <option>Last 14 Days</option>
+        <option selected="selected">Last 30 Days</option>
+        <option>Last 90 Days</option>
+        <option>Last Year</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="col-3" style="width:160px">
+    <div class="form-outline">
+      Rank By:
+      <select class="form-control" name="method" onchange="this.form.submit()">
+        <option selected="selected">Weighted Wins</option>
+        <option>Win/Loss</option>
+      </select>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="form-outline">
+      &nbsp;
+      <div id="method_text" style="font-size:15px;color:var(--bs-yellow);margin-top:7px"></div>
+    </div>
+  </div>
+
+
+  <!-- <div class="col-3" style="width:150px">
+    <div class="form-outline">
+      Level: 
+      <select class="form-control" name="level" onchange="this.form.submit()">
+        <option selected="selected">ERROR</option>
+        <option>WARNING</option>
+        <option>INFO</option>
+        <option>ALL</option>
+      </select>
+    </div>
+  </div> -->
+
+  <div class="col-1">
+     <button type="submit" class="btn {{ theme.BUTTON_CLASS }}" name="action" value="refresh" style="visibility:hidden;">Refresh</button>
+  </div>
+</div>
+</fieldset>
+</form>
+
+<div class="form-group row">
+  <div class="col-12">
+    <div class="card {{ theme.CARD_CLASS }} mb-2" style="width:auto">
+      <!-- <div class="card-header">Completed</div> -->
+      <div class="card-body">
+        <div id="leaderboard_table" class="ag-theme-quartz-auto-dark"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+var default_period = "Last 30 Days";
+var gridAPI = null;
+
+function init_controls() {
+    objSelect = document.getElementById("myform").period;
+    select = "{{ period or 'Last 30 Days' }}";
+    setSelectedValue(objSelect, select);
+    objSelect = document.getElementById("myform").method;
+    select = "{{ method or 'Weighted Wins' }}";
+    setSelectedValue(objSelect, select);
+}
+
+function render_grid() {
+  
+  if ( gridAPI ) {
+    gridAPI.destroy();
+    gridAPI = null;
+  }
+
+  $("#leaderboard_table").attr('visible','false');
+
+  const columnDefs = [
+    { field: "rank", headerName: "Rank", width: 80 },
+    { field: "name", headerName: "Name", width: 300 },
+    { field: "weighted_wins", headerName: "Weighted Wins", width: 150 },
+    { field: "wins", headerName: "Wins", width: 100 },
+    { field: "losses", headerName: "Losses", width: 100 },
+    { field: "games", headerName: "Contests", width: 100 },
+  ];
+
+
+  function dateFormatter(d) {
+    return formatDatePlusTimeFromUTC(d.value);
+  }
+
+  function jsonFormatter(d) {
+    return JSON.stringify(d.value);
+  }
+
+  // let the grid know which columns and what data to use
+  const gridOptions = {
+    defaultColDef: {
+      resizable: false,
+      sortable: false,
+    },
+    columnDefs: columnDefs,
+    rowData: null,//rowData,
+    onGridReady: (params) => {
+      const urlParams = new URLSearchParams(window.location.search);
+      p_method = urlParams.get('method');
+      if ( p_method == "Win/Loss" ) {
+        params.api.setColumnsVisible(['weighted_wins'], false);
+      }
+    },
+    //onFirstDataRendered: onFirstDataRendered,
+  };
+
+  
+  function onFirstDataRendered(params) {
+    //params.api.setColumnVisible('weighted_wins', false)
+    //params.api.sizeColumnsToFit();
+    /*window.setTimeout(() => {
+    const colIds = params.api.getColumns().map(c => c.colId)
+    params.columnApi.autoSizeColumns(colIds)
+  }, 50)
+  */
+  }
+
+
+  // setup the grid after the page has finished loading
+  document.addEventListener('DOMContentLoaded', () => {
+
+      const gridDiv = document.querySelector('#leaderboard_table');
+      gridAPI = agGrid.createGrid(gridDiv, gridOptions);
+
+      const urlParams = new URLSearchParams(window.location.search);
+      p_period = urlParams.get('period');
+      p_method = urlParams.get('method');
+      
+      /*
+      p_level = urlParams.get('level');
+      p_search = urlParams.get('search');
+      */
+
+      if ( p_period == null ) {
+        p_period = default_period;
+      }
+      if ( p_method == null || p_method.length == 0 ) {
+        p_method = 1;
+      } else {
+        if ( p_method == "Win/Loss" ) {
+          p_method = 0;
+        } else if ( p_method == "Weighted Wins" ) {
+          p_method = 1;
+        }
+      }
+
+      if ( p_method == 1 ) {
+        $("#method_text").text("Sum of head to head results, weighted by 'Win Value' from the 'Rank Baseline'");
+      } else {
+        $("#method_text").text("Sum of wins");
+      }
+
+      t_start = get_start_time(p_period)
+
+      //console.log("Period: " + p_period + " Start: " + t_start);
+
+      request = { 
+        start_time: formatDate(t_start),
+        method: p_method,
+      };
+
+      d3.json("api/leaderboard", {
+        method:"POST",
+        body: JSON.stringify(request),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      }).then( function(data) {
+        gridAPI.setGridOption("rowData", data);
+        $("#leaderboard_table").css('visibility', 'visible');
+        $("#leaderboard_table").show();
+      });
+      
+  });
+}
+
+init_controls();
+render_grid();
+
+// global variable
+var page="leaderboard";
+
+$('#leaderboard').addClass('active');
+
+</script>
+
+
+{% endblock %}
