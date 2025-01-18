@@ -34,7 +34,6 @@ DEPLOYMENT_LOGIN_MODE_OAUTH = "oauth"
 
 
 class ServiceConfig(BaseSettings):
-    
     STARTUP_TS: datetime = datetime.now(timezone.utc)
     SERVICE_HOST: str = "DEFAULT"
     SERVICE_BASE_NAME: str = "PYTHON_SERVER"
@@ -82,7 +81,7 @@ class ServiceConfig(BaseSettings):
 
     class Config:
         extra = "allow"
-        
+
     def get_startup_ts(self) -> datetime:
         return self.STARTUP_TS
 

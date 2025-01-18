@@ -1,6 +1,5 @@
 import os
 import json
-from datetime import datetime
 
 from authlib.integrations.starlette_client import OAuthError
 from fastapi import APIRouter, Request, status, Depends
@@ -10,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 
 # import starlette.status as status
 from . import api_security
-from .util import config, custom_logging, theme, security, db_util
+from .util import config, custom_logging, theme, security
 from . import db, constants, cache_session, cache_user
 
 LOGGING_ID = "api_webui"
@@ -39,6 +38,7 @@ def isMobileAgent(request):
     except Exception:
         return False
         pass
+
 
 def isEmbedded(request):
     try:
@@ -112,6 +112,7 @@ def get_router():
 
 favicon_path = "pyapp/static/icons/favicon.ico"
 
+
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
     return FileResponse(favicon_path)
@@ -119,6 +120,7 @@ async def favicon():
 
 ##############################
 # Core
+
 
 @app.get("/", include_in_schema=False)
 async def login(request: Request, include_in_schema=False):
@@ -133,6 +135,7 @@ async def login(request: Request, include_in_schema=False):
             "app_url": config.get().APP_HOST_URL,
         },
     )
+
 
 @app.get("/{group}/results", include_in_schema=False)
 def results(request: Request, group: str, user=Depends(api_security.getLoginManager())):
@@ -151,6 +154,7 @@ def results(request: Request, group: str, user=Depends(api_security.getLoginMana
         url=config.get().APP_HOST_URL + "/login_fail?reason=Access Denied",
         status_code=status.HTTP_302_FOUND,
     )
+
 
 @app.get("/{group}/login", include_in_schema=False)
 async def login_context(request: Request, group: str, include_in_schema=False):

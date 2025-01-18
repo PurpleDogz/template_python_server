@@ -11,11 +11,7 @@ from starlette.responses import FileResponse, RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 
 from . import api_client, api_security, api_webui, api_web_base
-from .util import (
-    config,
-    custom_logging,
-    observability_helpers
-)
+from .util import config, custom_logging, observability_helpers
 
 LOGGING_ID = "api_base"
 LOGGER = custom_logging.getLogger(LOGGING_ID)

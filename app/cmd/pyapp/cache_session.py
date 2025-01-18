@@ -130,6 +130,7 @@ class CacheSession(object):
 
 g_sc = None
 
+
 def get() -> CacheSession:
     global g_sc
     if g_sc is None:

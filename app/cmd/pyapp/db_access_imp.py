@@ -1,12 +1,10 @@
 import json
-from datetime import datetime
 from . import db, db_access, models_access, constants, cache_user
-from .util import custom_logging, config
+from .util import custom_logging
 from .model import rank
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from sqlalchemy import desc, func, or_
-import os
 
 
 LOGGING_ID = "AccessDB"
