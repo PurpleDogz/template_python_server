@@ -20,13 +20,6 @@ LOGIN_ACCESS_ENABLED = [
     LOGIN_STATUS_SUBSCRIBER,
     LOGIN_STATUS_NON_SUBSCRIBER,
 ]
-
-ROLE_ADMIN_READ_ONLY = "AdminRO"
-ROLE_ADMIN_WRITER = "AdminRW"
-ROLE_ADMIN_IMPERSONATE = "AdminImpersonate"  # Ability to impersonate users
-ROLE_ADMIN_RAW_DATA = "AdminRawData"  # Ability to call the raw data APIS
-ROLE_DEBUG = "Debug"  # Ability to see debug information
-
 LEADERBOARD_TYPE_RANK_WINS = 0
 LEADERBOARD_TYPE_RANK_WEIGHTED_WINS = 1
 

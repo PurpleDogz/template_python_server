@@ -5,6 +5,7 @@ All config via environment variables for now
 
 import os
 import uuid
+from datetime import datetime, timezone
 
 from pydantic import BaseSettings
 
@@ -33,10 +34,12 @@ DEPLOYMENT_LOGIN_MODE_OAUTH = "oauth"
 
 
 class ServiceConfig(BaseSettings):
+    
+    STARTUP_TS: datetime = datetime.now(timezone.utc)
     SERVICE_HOST: str = "DEFAULT"
-    SERVICE_BASE_NAME: str = "OLYMPIA"
+    SERVICE_BASE_NAME: str = "PYTHON_SERVER"
     SERVICE_NAME: str = "olympia"
-    DB_NAME: str = "olympia_access"
+    DB_NAME: str = "python_server"
     SERVICE_MODE: str = "ADMIN"
     SERVICE_NODE_ID: str = str(uuid.uuid4())
     DEFAULT_TIMEZONE: str = "Australia/Melbourne"
@@ -79,6 +82,9 @@ class ServiceConfig(BaseSettings):
 
     class Config:
         extra = "allow"
+        
+    def get_startup_ts(self) -> datetime:
+        return self.STARTUP_TS
 
     def get_file_cache_folder(self) -> str:
         return self.DATA_FOLDER + "/cache"
@@ -99,15 +105,6 @@ class ServiceConfig(BaseSettings):
 
     def check_deployment_access_mode(self, mode: str) -> bool:
         return self.DEPLOYMENT_ACCESS_MODE == mode
-
-    def check_email_domain(self, username: str) -> bool:
-        if username.find("@") == -1 or len(self.ACCESS_EMAIL_DOMAINS) == 0:
-            return True
-        email_domain = username.split("@")[1].lower()
-        for d in self.ACCESS_EMAIL_DOMAINS.split(";"):
-            if email_domain == d.lower():
-                return True
-        return False
 
 
 def get(cfg=None) -> ServiceConfig:

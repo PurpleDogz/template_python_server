@@ -10,10 +10,11 @@ from starlette.exceptions import HTTPException
 from starlette.responses import FileResponse, RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 
-from . import api_client, api_security, observability_helpers, api_webui, api_web_base
+from . import api_client, api_security, api_webui, api_web_base
 from .util import (
     config,
     custom_logging,
+    observability_helpers
 )
 
 LOGGING_ID = "api_base"

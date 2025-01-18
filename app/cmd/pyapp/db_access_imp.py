@@ -57,43 +57,43 @@ class Database(db_access.Database):
     def init_db_defaults(self):
         LOGGER.info("DB: Check Defaults")
 
-        default_json = "{}/general/{}".format(config.get().DATA_FOLDER, "ranking.json")
+        # default_json = "{}/general/{}".format(config.get().DATA_FOLDER, "ranking.json")
 
-        if os.path.exists(default_json):
-            try:
-                with open(default_json, "r") as f:
-                    j = json.load(f)
-                    for k in j.keys():
-                        LOGGER.info("DB: Loading Ranking for " + k)
-                        group_access = self.get_group_access(k)
-                        if group_access:
-                            for c in db.get_access_db():
-                                c.query(models_access.RankSnapshot).filter(
-                                    models_access.RankSnapshot.group_id
-                                    == group_access.id
-                                ).delete()
-                                c.commit()
+        # if os.path.exists(default_json):
+        #     try:
+        #         with open(default_json, "r") as f:
+        #             j = json.load(f)
+        #             for k in j.keys():
+        #                 LOGGER.info("DB: Loading Ranking for " + k)
+        #                 group_access = self.get_group_access(k)
+        #                 if group_access:
+        #                     for c in db.get_access_db():
+        #                         c.query(models_access.RankSnapshot).filter(
+        #                             models_access.RankSnapshot.group_id
+        #                             == group_access.id
+        #                         ).delete()
+        #                         c.commit()
 
-                            user_rankings = []
+        #                     user_rankings = []
 
-                            for u in j[k]:
-                                user = cache_user.get_user(u["username"])
-                                if user:
-                                    user_rankings.append(user.get_user_id())
-                                else:
-                                    LOGGER.error(
-                                        "Ranking Error: User '{}' not found in group '{}'".format(
-                                            u["username"], k
-                                        )
-                                    )
+        #                     for u in j[k]:
+        #                         user = cache_user.get_user(u["username"])
+        #                         if user:
+        #                             user_rankings.append(user.get_user_id())
+        #                         else:
+        #                             LOGGER.error(
+        #                                 "Ranking Error: User '{}' not found in group '{}'".format(
+        #                                     u["username"], k
+        #                                 )
+        #                             )
 
-                            self.add_rank_snapshot(datetime.now(), k, user_rankings)
+        #                     self.add_rank_snapshot(datetime.now(), k, user_rankings)
 
-            except Exception as ex:
-                LOGGER.error("Error in ranking.json -> {}".format(str(ex)))
-                pass
-        else:
-            LOGGER.info("No ranking.json file found")
+        #     except Exception as ex:
+        #         LOGGER.error("Error in ranking.json -> {}".format(str(ex)))
+        #         pass
+        # else:
+        #     LOGGER.info("No ranking.json file found")
 
     # Check with the login auth type also
     def check_user_login_access(self, username, login_type=None) -> bool:

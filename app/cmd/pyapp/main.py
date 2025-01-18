@@ -8,8 +8,7 @@ from types import FrameType
 from typing import Optional
 
 from . import db, api_base
-from . import observability_helpers
-from .util import config, custom_logging, key_killer
+from .util import config, custom_logging, key_killer, observability_helpers
 
 LOGGING_ID = "Main"
 LOGGER = custom_logging.getLogger(LOGGING_ID)

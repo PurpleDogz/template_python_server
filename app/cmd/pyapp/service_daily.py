@@ -25,9 +25,6 @@ class Daily(service_base.BaseService):
             daemon=daemon,
         )
 
-        # print(db.get_access().get_user_access_groups("officerb130@gmail.com"))
-        # db.get_access().add_rank_snapshot(datetime.now(), "iresstt",[1, 2])
-
     def check(self):
         # Add delay to allow startup to complete on the main server.
         time.sleep(30)

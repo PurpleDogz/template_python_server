@@ -40,10 +40,6 @@ def isMobileAgent(request):
         return False
         pass
 
-
-startup_ts = datetime.utcnow()
-
-
 def isEmbedded(request):
     try:
         if request.cookies.get("embedded") == "true":
@@ -61,7 +57,7 @@ def getDefaultArgs(request, group, username, addArgs=None):
     g = db.get_access().get_group_access(group)
 
     args = {
-        "now": startup_ts,
+        "now": config.get().get_startup_ts(),
         "request": request,
         "app_url": config.get().APP_HOST_URL,
         "theme": theme.get(),
@@ -116,7 +112,6 @@ def get_router():
 
 favicon_path = "pyapp/static/icons/favicon.ico"
 
-
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
     return FileResponse(favicon_path)
@@ -124,7 +119,6 @@ async def favicon():
 
 ##############################
 # Core
-
 
 @app.get("/", include_in_schema=False)
 async def login(request: Request, include_in_schema=False):
@@ -139,36 +133,6 @@ async def login(request: Request, include_in_schema=False):
             "app_url": config.get().APP_HOST_URL,
         },
     )
-
-
-@app.get("/{group}/", include_in_schema=False)
-async def home(request: Request, group: str, include_in_schema=False):
-    return RedirectResponse(
-        url=config.get().APP_HOST_URL + "/" + group + "/leaderboard",
-        status_code=status.HTTP_302_FOUND,
-    )
-
-
-@app.get("/{group}/leaderboard", include_in_schema=False)
-def leaderboard(
-    request: Request, group: str, user=Depends(api_security.getLoginManager())
-):
-    u = db.get_access().get_user_access(user.get(api_security.KEY_USERNAME), group)
-    if u:
-        g = db.get_access().get_group_access(group)
-        args = {"slug": g.slug, "group": g.name}
-        addParam(request, args, "period")
-        addParam(request, args, "method")
-        return templates.TemplateResponse(
-            formatHTML(request, "leaderboard"),
-            getDefaultArgs(request, group, user.get(api_security.KEY_USERNAME), args),
-        )
-
-    return RedirectResponse(
-        url=config.get().APP_HOST_URL + "/login_fail?reason=Access Denied",
-        status_code=status.HTTP_302_FOUND,
-    )
-
 
 @app.get("/{group}/results", include_in_schema=False)
 def results(request: Request, group: str, user=Depends(api_security.getLoginManager())):
@@ -187,48 +151,6 @@ def results(request: Request, group: str, user=Depends(api_security.getLoginMana
         url=config.get().APP_HOST_URL + "/login_fail?reason=Access Denied",
         status_code=status.HTTP_302_FOUND,
     )
-
-
-@app.get("/{group}/head_to_head", include_in_schema=False)
-def head_to_head(
-    request: Request, group: str, user=Depends(api_security.getLoginManager())
-):
-    u = db.get_access().get_user_access(user.get(api_security.KEY_USERNAME), group)
-    if u:
-        g = db.get_access().get_group_access(group)
-        args = {"slug": g.slug, "group": g.name}
-        addParam(request, args, "username")
-        addParam(request, args, "period")
-        addParam(request, args, "method")
-        return templates.TemplateResponse(
-            formatHTML(request, "head_to_head"),
-            getDefaultArgs(request, group, user.get(api_security.KEY_USERNAME), args),
-        )
-
-    return RedirectResponse(
-        url=config.get().APP_HOST_URL + "/login_fail?reason=Access Denied",
-        status_code=status.HTTP_302_FOUND,
-    )
-
-
-@app.get("/{group}/rank_baseline", include_in_schema=False)
-def rank_baseline(
-    request: Request, group: str, user=Depends(api_security.getLoginManager())
-):
-    u = db.get_access().get_user_access(user.get(api_security.KEY_USERNAME), group)
-    if u:
-        g = db.get_access().get_group_access(group)
-        args = {"slug": g.slug, "group": g.name}
-        return templates.TemplateResponse(
-            formatHTML(request, "rank_baseline"),
-            getDefaultArgs(request, group, user.get(api_security.KEY_USERNAME), args),
-        )
-
-    return RedirectResponse(
-        url=config.get().APP_HOST_URL + "/login_fail?reason=Access Denied",
-        status_code=status.HTTP_302_FOUND,
-    )
-
 
 @app.get("/{group}/login", include_in_schema=False)
 async def login_context(request: Request, group: str, include_in_schema=False):
@@ -328,25 +250,6 @@ async def auth_token(
 
     return RedirectResponse(
         url=config.get().APP_HOST_URL + "/login_fail?reason=Access Denied",
-        status_code=status.HTTP_302_FOUND,
-    )
-
-
-@app.post("/group_select", include_in_schema=False)
-async def group_select(request: Request):
-    j = await request.body()
-    parameters = db_util.get_params(j)
-
-    if "group" in parameters.keys():
-        response = RedirectResponse(
-            url=config.get().APP_HOST_URL + "/" + parameters["group"] + "/login",
-            status_code=status.HTTP_302_FOUND,
-        )
-        response.set_cookie(key=config.COOKIE_GROUP, value=parameters["group"])
-        return response
-
-    return RedirectResponse(
-        url=config.get().APP_HOST_URL + "/login_fail?reason=Unknown Group",
         status_code=status.HTTP_302_FOUND,
     )
 

@@ -1,5 +1,4 @@
-from .util import config, custom_logging
-from .util import service_observability
+from . import config, custom_logging, service_observability
 import warnings
 
 warnings.filterwarnings("ignore")
