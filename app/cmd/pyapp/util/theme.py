@@ -1,6 +1,4 @@
-"""Central place to setup needed config
-
-All config via environment variables for now
+"""Central place to setup ThemeConfig
 """
 
 from pydantic import BaseSettings

@@ -37,14 +37,12 @@ class ServiceConfig(BaseSettings):
     STARTUP_TS: datetime = datetime.now(timezone.utc)
     SERVICE_HOST: str = "DEFAULT"
     SERVICE_BASE_NAME: str = "PYTHON_SERVER"
-    SERVICE_NAME: str = "olympia"
+    SERVICE_NAME: str = "python_server"
     DB_NAME: str = "python_server"
     SERVICE_MODE: str = "ADMIN"
     SERVICE_NODE_ID: str = str(uuid.uuid4())
     DEFAULT_TIMEZONE: str = "Australia/Melbourne"
     DATA_FOLDER: str = ""
-
-    ACCESS_EMAIL_DOMAINS: str = ""
 
     DEPLOYMENT_ACCESS_MODE: str = DEPLOYMENT_ACCESS_MODE_OPEN
     DEPLOYMENT_MODE: str = DEPLOYMENT_MODE_PRODUCTION
@@ -105,7 +103,7 @@ class ServiceConfig(BaseSettings):
     def check_deployment_access_mode(self, mode: str) -> bool:
         return self.DEPLOYMENT_ACCESS_MODE == mode
 
-
+# Singleton
 def get(cfg=None) -> ServiceConfig:
     global _config_cache
     if not _config_cache:

@@ -10,7 +10,6 @@ LOGGER = custom_logging.getLogger(LOGGING_ID)
 ###################################################
 # Service
 
-
 class QReader(service_base.BaseService):
     def __init__(self, topic, channel, host, daemon=False, logger=None):
         self.topic = topic

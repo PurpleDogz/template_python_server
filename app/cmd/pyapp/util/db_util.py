@@ -8,8 +8,10 @@ from pydantic.datetime_parse import parse_date
 from typing import Any
 from urllib.parse import parse_qs
 
-from . import config
-
+try:
+    from . import config
+except Exception:
+    import config
 
 class AlchemyEncoder(json.JSONEncoder):
     def default(self, obj):

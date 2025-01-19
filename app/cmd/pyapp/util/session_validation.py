@@ -1,4 +1,4 @@
-from . import custom_logging, roles, config
+from . import custom_logging, config
 from fastapi_login.exceptions import InvalidCredentialsException
 
 from fastapi import Request
@@ -31,9 +31,10 @@ def NotAuthenticatedExceptionMessage():
 ############################################
 # Check the session key
 class SessionValidation:
-    def __init__(self, token_url: str, user_urls: list[str], use_cookie=True):
+    def __init__(self, token_url: str, user_urls: list[str], roles: list[str], use_cookie=True):
         self.token_url = token_url
         self.user_urls = user_urls
+        self.roles = roles
         self.use_cookie = use_cookie
         self._not_authenticated_exception = InvalidCredentialsException
 
@@ -64,7 +65,7 @@ class SessionValidation:
 
         try:
             role_list = (
-                [roles.ROLE_ADMIN_READ_ONLY]
+                self.roles
                 if request.url.path not in self.user_urls
                 else []
             )

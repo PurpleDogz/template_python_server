@@ -1,9 +1,4 @@
 # Test for time_util.py
-try:
-    pass
-except Exception:
-    pass
-
 
 # Manual mode: Iterate over the active and intensity days
 def test_util_1(debug_output=False, simple_test=False):

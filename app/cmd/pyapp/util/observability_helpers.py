@@ -43,4 +43,5 @@ def get_logger_service():
 
 
 def add_message(topic, data):
-    get_logger_service().add_message({"topic": topic, "data": data})
+    if get_logger_service():
+        get_logger_service().add_message({"topic": topic, "data": data})
