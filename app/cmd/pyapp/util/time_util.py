@@ -71,7 +71,6 @@ def getToday(tz):
     tz = pytz.timezone(tz)
     return datetime.now(tz)
 
-
 def convert_local_to_utc(ts, format="%Y-%m-%d %H:%M:%S"):
     dt = datetime.strptime(ts, format)
     return dt.astimezone(timezone.utc).isoformat()
@@ -155,6 +154,7 @@ def get_start_date(tz, start, round_to_month=False, base_date=None):
 
 
 def get_start_date_absolute(tz, start):
+    
     if start == START_ALL:
         return None
 
@@ -178,6 +178,8 @@ def get_start_date_absolute(tz, start):
         start_date = start_date + timedelta(days=-YEAR_DAYS)
     elif start == START_24MONTHS:
         start_date = start_date + timedelta(days=-int(YEAR_DAYS * 2))
+    else:
+        return None
 
     start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -242,7 +244,7 @@ class DurationTimer(object):
         if durationMS < 60 * 1000:
             return "%d second(s)" % int(durationMS / 1000)
         min = int(durationMS / (60 * 1000))
-        sec = int((durationMS / (60 * 1000) - min) * 60)
+        sec = int((durationMS - (min * 60 * 1000)) / 1000)
         if sec == 0:
             return "{MIN} minute(s)".format(MIN=min)
         return "{MIN} minute(s) {SEC} second(s)".format(MIN=min, SEC=sec)

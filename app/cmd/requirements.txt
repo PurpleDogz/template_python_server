@@ -36,3 +36,4 @@ authlib
 pytest
 pytest-cov
 pytest-mock
+freezegun

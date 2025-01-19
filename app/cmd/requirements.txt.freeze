@@ -26,6 +26,7 @@ enum-compat==0.0.3
 fastapi==0.111.0
 fastapi-cli==0.0.2
 fastapi-login==1.10.0
+freezegun==1.5.1
 frozenlist==1.4.1
 gevent==24.2.1
 gnsq==1.0.2
