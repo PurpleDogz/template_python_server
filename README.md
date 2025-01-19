@@ -2,15 +2,17 @@
 
 # Python Server template
 
-Template for a Python server using key libraries:
+Templated repo for building a Python based API and HTML server.
 
-** FastAPI.
-** SQLAlchemy.
-** Pydantic
-** JinJa2
+Key libraries:
 
-The server integrate with a postgres database and has a basic CRUD API.
+* FastAPI
+* SQLAlchemy
+* Pydantic
+* JinJa2
+
+The server integrates with a postgres database to host the data model.
 
 # Infrastructure
 
-Contains example docker-compose setup with envoy proxy
+* Builds from a dockerfile to integrate into a local docker-compose setup.
